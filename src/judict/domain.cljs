@@ -75,19 +75,20 @@
 (def categories
   (distinct (flatten techniques)))
 
-(defn find-related-techniques [selected-items]
+(defn techniques-containing [words]
   (->> techniques
-       (filter #(every? (set %) selected-items))
+       (filter #(every? (set %) words))))
+
+(defn techniques-without-selection [techniques selection]
+  (->> techniques
        flatten
-       (into #{})
-       (#(apply disj % selected-items))
+       distinct
+       (remove (set selection))  ;; Use remove with selection set instead of filter
        sort))
 
-(defn get-full-technique-name [selection]
-  (let [selected-keys (keys selection)
-        matching-technique (->> techniques
-                              (filter #(= (set %) (set selected-keys)))
-                              first)]
-    (if matching-technique
-      (into {} (map #(vector % true) matching-technique))
-      selection)))
+(defn join-keywords [lst]
+  (apply str (map name lst)))
+
+(defn technique-link [selection]
+  (let [technique (join-keywords selection)]
+    (str "https://judoinfo.com/" technique)))

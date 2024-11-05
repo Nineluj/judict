@@ -25,7 +25,8 @@
 (defn selected-technique [name]
   [:div
    {:style {:text-align "center"}
-    :key name}
+    :key name
+    :on-click #(rf/dispatch [:judict.events/remove-item-from-selection name])}
    (technique name (:accent style/colors) nil)
    (translation-display name)])
 
@@ -36,7 +37,9 @@
      (map floating-text @selectable)]))
 
 (defn selection-display []
-  (let [selection @(rf/subscribe [:selection])]
+  (let [selection @(rf/subscribe [:selection])
+        no-selection (empty? selection)
+        full-selection @(rf/subscribe [:is-selection-valid])]
     [:div
      {:style {:background (:background style/colors)
               :padding "20px"
@@ -48,15 +51,18 @@
                :justify-content "center"
                :flex-wrap "wrap"
                :gap "20px"}}
-      (map selected-technique
-           (keys selection))]
-     [:p
-      {:style {:text-align "center"
-               :color (:secondary style/colors)
-               :font-weight "bold"
-               :margin-top "15px"}}
-      (when (empty? selection) "Select a word above to get started!")]]))
+      (map selected-technique selection)]
 
+     (when full-selection
+       [:a {:href (domain/technique-link selection) :target "_blank"} "Link to technique"])
+
+     (when no-selection
+       [:p
+        {:style {:text-align "center"
+                 :color (:secondary style/colors)
+                 :font-weight "bold"
+                 :margin-top "15px"}}
+        "Select a word above to get started!"])]))
 
 (defn reset-button []
   [:button
@@ -65,19 +71,19 @@
    "Reset Selection"])
 
 (defn main-panel []
-  [:div
-   {:style {:max-width "800px"
-            :margin "0 auto"
-            :padding "20px"
-            :font-family "system-ui, -apple-system, sans-serif"}}
-   [:h1
-    {:style {:color (:text style/colors)
-             :text-align "center"
-             :font-size "2.5em"
-             :margin-bottom "10px"}}
-    "Judict"]
-   (selection-area)
-   (selection-display)
-   (let [selection @(rf/subscribe [:selection])]
-     (when (seq selection)
-       (reset-button)))])
+  (let [has-selection (seq @(rf/subscribe [:selection]))
+        has-selectable (seq @(rf/subscribe [:selectable]))]
+    [:div
+     {:style {:max-width "800px"
+              :margin "0 auto"
+              :padding "20px"
+              :font-family "system-ui, -apple-system, sans-serif"}}
+     [:h1
+      {:style {:color (:text style/colors)
+               :text-align "center"
+               :font-size "2.5em"
+               :margin-bottom "10px"}}
+      "Judict"]
+     (when has-selectable (selection-area))
+     (selection-display)
+     (when has-selection (reset-button))]))

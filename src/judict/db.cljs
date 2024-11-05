@@ -1,5 +1,6 @@
 (ns judict.db)
 
 (def default-db
- {:selection {}
-  :selectable {}})
+  {:selection '()
+   :selectable '()
+   :is-selection-valid nil})

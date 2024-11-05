@@ -10,3 +10,8 @@
  :selection
  (fn [db]
    (:selection db)))
+
+(rf/reg-sub
+ :is-selection-valid
+ (fn [db]
+   (:is-selection-valid db)))
