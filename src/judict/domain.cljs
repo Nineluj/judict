@@ -1,4 +1,6 @@
-(ns judict.domain)
+(ns judict.domain
+  [:require
+   [clojure.string]])
 
 (def translations
   {:o "major/big"
@@ -18,8 +20,6 @@
    :uchi "inner"
    :soto "outer"
    :gari "reap"
-
-   ;; Hold downs
    :kesa "scarf"
    :gatame "hold"
    :mune "chest"
@@ -28,52 +28,88 @@
    :shiho "four corner"
    :kami "upper"
    :tate "straight"
-
-   ;; Breakfalls
    :ushiro "backwards"
    :mae "forwards"
    :ukemi "breakfall"
    :zempo "forward"
    :kaiten "rolling"
-
-   ;; Other
    :tani "valley"
-   :ura "back"})
+   :ura "back"
+   :morote "both hands"
+   :eri "lapel"
+   :hiza "knee"
+   :guruma "wheel"
+   :sasae "supporting"
+   :hane "spring"
+   :okuri "sliding"
+   :mata "thigh"
+   :harai "sweeping"
+   :kosoto "minor outer"
+   :gake "hook"
+   :mawari "turning"
+   :waki "armpit"
+   :juji "cross"
+   :ude "arm"})
+
+;; syllabus is here:
+;; https://www.britishjudo.org.uk/get-started/grading/kyu-grade-scheme/
+(def syllabus
+  {
+   :red
+   {:breakfalls '((ushiro ukemi)
+                  (yoko ukemi)
+                  (mae mawari ukemi))
+    :tachi-waza '((o soto gari)
+                  (de ashi barai)
+                  (uki goshi))
+    :osaekomi-waza '((kesa gatame)
+                     (mune gatame)
+                     (kuzure kesa gatame))}
+   :yellow
+   {:breakfalls '((mae ukemi))
+    :tachi-waza '((tai otoshi)
+                  (ippon seoi nage)
+                  (o uchi gari))
+    :osaekomi-waza '((yoko shiho gatame)
+                     (tate shiho gatame)
+                     (kami shiho gatame))}
+
+   :orange
+   {:tachi-waza '((tsuri komi goshi)
+                  (o goshi)
+                  (seoi otoshi)
+                  (morote seoi nage)
+                  (kouchi gari)
+                  (kosoto gake)
+                  (kosoto gari)
+                  (osoto gari))}
+
+   :green
+   {:tachi-waza '((harai goshi)
+                  (uchi mata)
+                  (hiza guruma)
+                  (sasae tsuri komi ashi)
+                  (hane goshi)
+                  (okuri ashi barai)
+                  (morote eri seoi nage))
+    :kansetsu-waza '((ude gatame)
+                     (waki gatame)
+                     (hiza gatame)
+                     (juji gatame))}})
 
 (def techniques
-  [ ;; Throwing Techniques (Tachi-waza)
-   [:o :goshi]
-   [:ippon :seoi :nage]
-   [:uki :goshi]
-   [:tai :otoshi]
-   [:de :ashi :barai]
-   [:tsuri :komi :goshi]
-   [:ko :uchi :gari]
-   [:ko :soto :gari]
-   [:o :uchi :gari]
-   [:o :soto :gari]
-
-   ;; Holding Techniques (Osae-komi-waza)
-   [:kesa :gatame]
-   [:mune :gatame]
-   [:kuzure :kesa :gatame]
-   [:yoko :shiho :gatame]
-   [:kami :shiho :gatame]
-   [:tate :shiho :gatame]
-
-   ;; Breakfalling (Ukemi)
-   [:ushiro :ukemi]
-   [:yoko :ukemi]
-   [:mae :ukemi]
-   [:zempo :kaiten :ukemi]
-
-   ;; Groundwork Turning (Ne-waza)
-   [:mune :gatame]
-   [:tani :otoshi]
-   [:ura :nage]])
+  (->> syllabus
+       vals
+       (mapcat vals)
+       (mapcat identity)
+       (map #(map keyword %))))
 
 (def categories
-  (distinct (flatten techniques)))
+  (->> techniques
+       flatten                       ; flatten the individual technique keywords
+       distinct                         ; get unique words
+       sort))              ; sort alphabetically
+
 
 (defn techniques-containing [words]
   (->> techniques
@@ -87,8 +123,9 @@
        sort))
 
 (defn join-keywords [lst]
-  (apply str (map name lst)))
+  (clojure.string/join " " (map name lst)))
 
 (defn technique-link [selection]
-  (let [technique (join-keywords selection)]
-    (str "https://judoinfo.com/" technique)))
+  (let [technique (str "Judo " (join-keywords selection) " technique")]
+    (str "https://www.youtube.com/results?search_query="
+         (js/encodeURIComponent technique))))

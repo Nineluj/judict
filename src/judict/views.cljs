@@ -25,9 +25,8 @@
 (defn selected-technique [name]
   [:div
    {:style {:text-align "center"}
-    :key name
-    :on-click #(rf/dispatch [:judict.events/remove-item-from-selection name])}
-   (technique name (:accent style/colors) nil)
+    :key name}
+   (technique name (:accent style/colors) #(rf/dispatch [:judict.events/remove-item-from-selection name]))
    (translation-display name)])
 
 (defn selection-area []
@@ -53,16 +52,22 @@
                :gap "20px"}}
       (map selected-technique selection)]
 
-     (when full-selection
-       [:a {:href (domain/technique-link selection) :target "_blank"} "Link to technique"])
-
      (when no-selection
        [:p
         {:style {:text-align "center"
                  :color (:secondary style/colors)
                  :font-weight "bold"
                  :margin-top "15px"}}
-        "Select a word above to get started!"])]))
+        "Select a word above to get started!"])
+
+     (when full-selection
+      [:a {:href (domain/technique-link selection)
+           :target "_blank"
+           :style {:display "block"
+                   :text-align "center"
+                   :margin "20px 0"
+                   :color (:accent style/colors)}}
+       "View technique on YouTube"])]))
 
 (defn reset-button []
   [:button
