@@ -1,15 +1,21 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>judict</title>
-  </head>
-  <body>
-    <noscript>
-      judict is a JavaScript app. Please enable JavaScript to continue.
-    </noscript>
-    <div id="app"></div>
-    <script src="/judict/js/compiled/app.js"></script>
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>judict</title>
+    </head>
+    <body>
+        <noscript>
+            judict is a JavaScript app. Please enable JavaScript to continue.
+        </noscript>
+        <div id="app"></div>
+        <script>
+            // workaround for getting the right path when hosted in gh-pages
+            // that might have a path prefix.
+            var script = document.createElement("script");
+            script.src = `${location.pathname}js/compiled/app.js`;
+            document.body.appendChild(script);
+        </script>
+    </body>
 </html>

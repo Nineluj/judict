@@ -44,7 +44,6 @@
    :okuri "sliding"
    :mata "thigh"
    :harai "sweeping"
-   :kosoto "minor outer"
    :gake "hook"
    :mawari "turning"
    :waki "armpit"
@@ -79,9 +78,9 @@
                   (o goshi)
                   (seoi otoshi)
                   (morote seoi nage)
-                  (kouchi gari)
-                  (kosoto gake)
-                  (kosoto gari)
+                  (ko uchi gari)
+                  (ko soto gake)
+                  (ko soto gari)
                   (osoto gari))}
 
    :green

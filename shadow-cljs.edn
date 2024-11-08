@@ -19,7 +19,7 @@
  {:app
   {:target     :browser
    :output-dir "resources/public/js/compiled"
-   :asset-path "/judict/js/compiled"
+   :asset-path "/js/compiled"
    :modules
    {:app {:init-fn judict.core/init}}
    :devtools
